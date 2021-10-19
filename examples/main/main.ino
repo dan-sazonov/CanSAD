@@ -1,4 +1,4 @@
-//l3g
+  //l3g
 
 #include <Wire.h>
 #include <L3G.h>
