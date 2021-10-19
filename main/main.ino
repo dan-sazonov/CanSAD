@@ -7,8 +7,10 @@ float startAltitude;
 bool startFlag, sepFlag, recFlag, landFlag = false;
 float currentAltitude = 0.0;
 float maxAltitude = 0.0;
+int counter;
 
 void setup() {
+  pinMode(A3, OUTPUT);
   Serial.begin(9600);
   Serial.println("begin");
   bmp.begin();
@@ -26,6 +28,9 @@ void loop() {
   if (currentAltitude > maxAltitude) maxAltitude = currentAltitude;
   if ((maxAltitude - currentAltitude >= 50)  && startFlag) recFlag = true;
   
+  if (recFlag) {
+    digitalWrite(A3, HIGH);
+  }
   
   Serial.println("CanSAD;" + String(millis()) + ";" + String(currentAltitude) + ";" + String(startFlag) + ";" + String(sepFlag) + ";" + String(recFlag) + ";" + String(landFlag) + "\n");
   
