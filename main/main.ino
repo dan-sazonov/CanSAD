@@ -1,4 +1,5 @@
-# define srv_pin A3
+#define srv_pin A3  // пин сервы
+#define srv_high_time 5000  // время работы сервы
 
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -11,8 +12,9 @@ bool start_flag, sep_flag, rec_flag, land_flag = false;
 float current_altitude = 0.0;
 float max_altitude = 0.0;
 
-unsigned long last_time;
-bool srv_is_working = false;
+unsigned long last_time = 0;
+bool srv_state = false;
+bool srv_timeout = false;
 
 void setup() {
   pinMode(srv_pin, OUTPUT);
@@ -35,14 +37,19 @@ void loop() {
   if ((max_altitude - current_altitude >= 50)  && start_flag) rec_flag = true;
 
   // запускаем серву на 2 секунды
-  if (rec_flag) {
-    digitalWrite(srv_pin, HIGH);
+  if (rec_flag && !srv_state) {
+    srv_state = true && !srv_timeout;
+    last_time = millis();
+    digitalWrite(srv_pin, srv_state);
   }
+  if (millis() - last_time >= srv_high_time && srv_state) {
+    srv_state = false;
+    srv_timeout = true;
+}
 
   // отправляем телеметрию
   Serial.println("CanSAD;" + String(millis()) + ";" + String(current_altitude) + ";" + String(start_flag) + ";" + String(sep_flag) + 
   ";" + String(rec_flag) + ";" + String(land_flag) + "\n");
-  
 }
 
 
