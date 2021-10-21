@@ -31,10 +31,11 @@ void loop() {
   float last_altitude = current_altitude;
   current_altitude = getAltitude() - start_altitude;
   
-  // определяем точку взлета, точку запуска системы спасения, высчитываем максимальную высоту
+  // определяем точку взлета, точку запуска системы спасения, точку приземления и высчитываем максимальную высоту
   if (current_altitude - start_altitude >= 5.0) start_flag = true;
   if (current_altitude > max_altitude) max_altitude = current_altitude;
   if ((max_altitude - current_altitude >= 50)  && start_flag) rec_flag = true;
+  if (last_altitude - current_altitude <= 2 && start_flag) land_flag = true;
 
   // запускаем серву на 2 секунды
   if (rec_flag && !srv_state) {
